@@ -77,19 +77,26 @@ func AddPacket(line string) error {
 
 func WriteFile(data *map[string]int) error {
 	fileName := "/var/www/traffic/logs/"+currentDate+".log"
+	// fileName := currentDate+".log"
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644) 
 	if err != nil {
 		return err
 	}
 	defer f.Close()
+
+	var sb strings.Builder
+
 	for key, value := range *data {
 		text := key + " " + fmt.Sprint(value) + "\n"
-		_, err := f.WriteString(text) 
-
-		if err != nil {
-			return err
-		}
+		sb.WriteString(text)		
 	}
+
+	_, err = f.WriteString(sb.String()) 
+
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -113,11 +120,18 @@ func main() {
 			log.Fatal(err)
 		}
 
-		if len(buffer) > 10 {
-			err := WriteFile(&buffer)
-			if err != nil {
-				log.Panicln(err)
+		if len(buffer) > 1024 {
+			copyBuffer := make(map[string]int)
+			for k, v := range(buffer) {
+				copyBuffer[k] = v
 			}
+
+			go WriteFile(&copyBuffer)
+
+			// err := WriteFile(&buffer)
+			// if err != nil {
+			// 	log.Panicln(err)
+			// }
 			buffer = make(map[string]int)
 		}
 	}
