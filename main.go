@@ -77,7 +77,6 @@ func AddPacket(line string) error {
 
 func WriteFile(data *map[string]int) error {
 	fileName := "/var/www/traffic/logs/"+currentDate+".log"
-	// fileName := currentDate+".log"
 	f, err := os.OpenFile(fileName, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644) 
 	if err != nil {
 		return err
@@ -128,10 +127,6 @@ func main() {
 
 			go WriteFile(&copyBuffer)
 
-			// err := WriteFile(&buffer)
-			// if err != nil {
-			// 	log.Panicln(err)
-			// }
 			buffer = make(map[string]int)
 		}
 	}

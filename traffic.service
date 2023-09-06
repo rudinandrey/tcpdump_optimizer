@@ -1,0 +1,8 @@
+[Unit]
+Description=TcpDump netflow with filter on PHP
+After=syslog.target network.target
+[Service]
+Type=simple
+ExecStart=/var/www/traffic/start.sh
+[Install]
+WantedBy=local-fs.target
